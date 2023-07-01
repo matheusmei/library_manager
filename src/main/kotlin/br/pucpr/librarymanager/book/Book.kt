@@ -6,7 +6,6 @@ import br.pucpr.librarymanager.users.User
 
 
 @Entity
-@Table(name = "TbBook")
 class Book(
     @Id @GeneratedValue
     var id: Long? = null,

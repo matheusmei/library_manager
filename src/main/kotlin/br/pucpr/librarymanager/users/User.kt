@@ -26,7 +26,7 @@ class User(
 
     @OneToMany // 1 user -> varios livros
     @JoinTable(
-        name = "TbBook",
+        name = "OnTbBook",
         joinColumns = [JoinColumn(name = "idUser")],
         inverseJoinColumns = [JoinColumn(name = "idBook")]
     )
