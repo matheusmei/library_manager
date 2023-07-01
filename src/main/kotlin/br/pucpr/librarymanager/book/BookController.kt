@@ -1,5 +1,7 @@
 package br.pucpr.librarymanager.book
 
+import br.pucpr.librarymanager.book.book_requests.BookRequest
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,10 +11,14 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/books")
 class BookController (
+    val service: BookService,
     @Autowired private val bookRepository : BookRepository
 ){
     @GetMapping()
-    fun getAllBooks():List<Book> = bookRepository.findAll()
+    fun listBooks() = service.getAllBooks()
+
+    fun addNewBook(@Valid @RequestBody req: BookRequest) =
+        service.userAddBook(req).toResponse().let { ResponseEntit}
 
     @PostMapping()
     fun createNewBook(@Validated @RequestBody book: Book) : Book

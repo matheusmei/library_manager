@@ -2,7 +2,11 @@ package br.pucpr.librarymanager.users
 
 import br.pucpr.librarymanager.users.responses.UserResponse
 import jakarta.persistence.*
+import br.pucpr.librarymanager.book.Book
+import br.pucpr.librarymanager.book.BookService
+import br.pucpr.librarymanager.book.book_response.BookResponse
 import jakarta.validation.constraints.Email
+
 
 @Entity
 @Table(name = "TblUser")
@@ -20,6 +24,14 @@ class User(
     @Column(nullable = false)
     var name: String = "",
 
+    @OneToMany // 1 user -> varios livros
+    @JoinTable(
+        name = "TbBook",
+        joinColumns = [JoinColumn(name = "idUser")],
+        inverseJoinColumns = [JoinColumn(name = "idBook")]
+    )
+    val books: MutableSet<Book> = mutableSetOf(),
+
     @ManyToMany
     @JoinTable(
         name = "UserRole",
@@ -28,5 +40,5 @@ class User(
     )
     val roles: MutableSet<Role> = mutableSetOf()
 ) {
-    fun toResponse() = UserResponse(id!!, name, email)
+    fun toResponse() = UserResponse(id!!, name, email, books)
 }

@@ -1,5 +1,9 @@
 package br.pucpr.librarymanager.users
 
+import br.pucpr.librarymanager.book.Book
+import br.pucpr.librarymanager.book.BookController
+import br.pucpr.librarymanager.book.BookRepository
+import br.pucpr.librarymanager.book.book_requests.BookRequest
 import br.pucpr.librarymanager.exception.BadRequestException
 import br.pucpr.librarymanager.security.Jwt
 import br.pucpr.librarymanager.users.requests.LoginRequest
@@ -54,6 +58,11 @@ class UsersService(
         log.warn("User deleted. id={} name={}", user.id, user.name)
         repository.delete(user)
         return true
+    }
+
+    fun getBooks(id: Long): MutableSet<Book> {
+        val user = repository.findByIdOrNull(id) ?: return mutableSetOf()
+        return user.books
     }
 
     companion object {

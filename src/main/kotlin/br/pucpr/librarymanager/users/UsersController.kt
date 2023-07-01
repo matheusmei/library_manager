@@ -1,5 +1,6 @@
 package br.pucpr.librarymanager.users
 
+import br.pucpr.librarymanager.book.book_requests.BookRequest
 import br.pucpr.librarymanager.users.requests.LoginRequest
 import br.pucpr.librarymanager.users.requests.UserRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -61,4 +62,9 @@ class UsersController(val service: UsersService) {
     fun delete(@PathVariable("id") id: Long): ResponseEntity<Void> =
         if (service.delete(id)) ResponseEntity.ok().build()
         else ResponseEntity.notFound().build()
+
+    @GetMapping("/{id}/books")
+    fun getBooksFor(@PathVariable("id") id: Long) =
+        service.getBooks(id)
+            ?.let { ResponseEntity.ok(it.forEach { it.toResponse() }) }
 }
