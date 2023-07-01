@@ -1,6 +1,7 @@
 package br.pucpr.librarymanager.book
 
 import br.pucpr.librarymanager.book.book_requests.BookRequest
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +17,10 @@ class BookService(
             authors = req.authors!!,
         )
         return repository.save(userBook)
-
     }
+
+    fun getBookById(id: Long) = repository.findByIdOrNull(id)
+
+    fun deleteBookById(id: Long) {}
 
 }

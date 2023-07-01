@@ -17,33 +17,42 @@ class BookController (
     @GetMapping()
     fun listBooks() = service.getAllBooks()
 
+    @PostMapping
     fun addNewBook(@Valid @RequestBody req: BookRequest) =
-        service.userAddBook(req).toResponse().let { ResponseEntit}
+        service.userAddBook(req)
+            .toResponse()
+            .let { ResponseEntity.status(HttpStatus.CREATED).body(it) }
 
-    @PostMapping()
-    fun createNewBook(@Validated @RequestBody book: Book) : Book
-            = bookRepository.save(book)
+//    @PostMapping()
+//    fun createNewBook(@Validated @RequestBody book: Book) : Book
+//            = bookRepository.save(book)
 
     @GetMapping("/{id}")
-    fun getBookById(@PathVariable(value = "id")bookId:Long)
-            : ResponseEntity<Book> {
-        return bookRepository.findById(bookId).map {
-                book -> ResponseEntity.ok(book)
-        }.orElse(ResponseEntity.notFound().build())
-    }
+    fun getBookById(@PathVariable("id") id: Long) =
+        service.getBookById(id)
+            ?.let { ResponseEntity.ok(it.toResponse()) }
+            ?: ResponseEntity.notFound().build()
 
-    @PutMapping("/{id}")
-    fun updateBookById(
-        @PathVariable(value = "id")bookId: Long,
-        @Validated @RequestBody newBook: Book
-    ): ResponseEntity<Book> {
-        return bookRepository.findById(bookId).map {
-                existingBook ->
-            val updatedBook = existingBook.copy(
-                title = newBook.title,authors = newBook.authors)
-            ResponseEntity.ok().body(bookRepository.save(updatedBook))
-        }.orElse(ResponseEntity.notFound().build())
-    }
+//    @GetMapping("/{id}")
+//    fun getBookById(@PathVariable(value = "id")bookId:Long)
+//            : ResponseEntity<Book> {
+//        return bookRepository.findById(bookId).map {
+//                book -> ResponseEntity.ok(book)
+//        }.orElse(ResponseEntity.notFound().build())
+//    }
+
+//    @PutMapping("/{id}")
+//    fun updateBookById(
+//        @PathVariable(value = "id")bookId: Long,
+//        @Validated @RequestBody newBook: Book
+//    ): ResponseEntity<Book> {
+//        return bookRepository.findById(bookId).map {
+//                existingBook ->
+//            val updatedBook = existingBook.copy(
+//                title = newBook.title,authors = newBook.authors)
+//            ResponseEntity.ok().body(bookRepository.save(updatedBook))
+//        }.orElse(ResponseEntity.notFound().build())
+//    }
 
     @DeleteMapping("/{id}")
     fun deleteBookById(
@@ -55,6 +64,8 @@ class BookController (
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }
+
+
     @PostMapping("/filter")
     fun getBooksByTitle(
         @RequestParam("title",required = true)title:String)

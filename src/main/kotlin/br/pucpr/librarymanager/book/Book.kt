@@ -18,7 +18,7 @@ class Book(
     var authors:String = "",
 
     @ManyToOne
-    val users: MutableSet<User> = mutableSetOf()
+    val users: User? = null
 
 ) {
     fun toResponse() = id?.let { BookResponse(it, title, authors) }
