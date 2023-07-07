@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference
 
 
 @Entity
-class Book(
+data class Book(
     @Id @GeneratedValue
     var id: Long? = null,
 

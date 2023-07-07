@@ -23,47 +23,29 @@ class BookController (
             .toResponse()
             .let { ResponseEntity.status(HttpStatus.CREATED).body(it) }
 
-//    @PostMapping()
-//    fun createNewBook(@Validated @RequestBody book: Book) : Book
-//            = bookRepository.save(book)
-
     @GetMapping("/{id}")
     fun getBookById(@PathVariable("id") id: Long) =
         service.getBookById(id)
             ?.let { ResponseEntity.ok(it.toResponse()) }
             ?: ResponseEntity.notFound().build()
 
-//    @GetMapping("/{id}")
-//    fun getBookById(@PathVariable(value = "id")bookId:Long)
-//            : ResponseEntity<Book> {
-//        return bookRepository.findById(bookId).map {
-//                book -> ResponseEntity.ok(book)
-//        }.orElse(ResponseEntity.notFound().build())
-//    }
+    @PutMapping("/{id}")
+    fun updateBookById( @PathVariable("id") id: Long, @Validated @RequestBody newBook: Book ): ResponseEntity<Void> {
+        val updatedBook = service.updateBookById(id, newBook)
+        return if (updatedBook != null) {
+            ResponseEntity.ok().build()
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
 
-//    @PutMapping("/{id}")
-//    fun updateBookById(
-//        @PathVariable(value = "id")bookId: Long,
-//        @Validated @RequestBody newBook: Book
-//    ): ResponseEntity<Book> {
-//        return bookRepository.findById(bookId).map {
-//                existingBook ->
-//            val updatedBook = existingBook.copy(
-//                title = newBook.title,authors = newBook.authors)
-//            ResponseEntity.ok().body(bookRepository.save(updatedBook))
-//        }.orElse(ResponseEntity.notFound().build())
-//    }
 
     @DeleteMapping("/{id}")
-    fun deleteBookById(
-        @PathVariable(value = "id")bookId: Long
-    ): ResponseEntity<Void> {
-        return bookRepository.findById(bookId).map {
-                book ->
-            bookRepository.delete(book)
-            ResponseEntity<Void>(HttpStatus.OK)
-        }.orElse(ResponseEntity.notFound().build())
-    }
+    fun deleteBookById(@PathVariable("id") id: Long): ResponseEntity<Void> =
+        if (service.deleteBookById(id)) ResponseEntity.ok().build()
+        else ResponseEntity.notFound().build()
+
+
 
 
     @PostMapping("/filter")
