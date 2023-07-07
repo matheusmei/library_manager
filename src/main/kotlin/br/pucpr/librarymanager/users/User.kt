@@ -3,8 +3,7 @@ package br.pucpr.librarymanager.users
 import br.pucpr.librarymanager.users.responses.UserResponse
 import jakarta.persistence.*
 import br.pucpr.librarymanager.book.Book
-import br.pucpr.librarymanager.book.BookService
-import br.pucpr.librarymanager.book.book_response.BookResponse
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.validation.constraints.Email
 
 
@@ -24,6 +23,7 @@ class User(
     @Column(nullable = false)
     var name: String = "",
 
+    @JsonManagedReference
     @OneToMany // 1 user -> varios livros
     @JoinTable(
         name = "OnTbBook",

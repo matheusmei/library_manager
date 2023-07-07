@@ -3,6 +3,7 @@ package br.pucpr.librarymanager.book
 import br.pucpr.librarymanager.book.book_response.BookResponse
 import jakarta.persistence.*
 import br.pucpr.librarymanager.users.User
+import com.fasterxml.jackson.annotation.JsonBackReference
 
 
 @Entity
@@ -16,8 +17,9 @@ class Book(
     @Column(nullable = false)
     var authors:String = "",
 
+    @JsonBackReference
     @ManyToOne
-    val users: User? = null
+    var user: User? = null
 
 ) {
     fun toResponse() = id?.let { BookResponse(it, title, authors) }
