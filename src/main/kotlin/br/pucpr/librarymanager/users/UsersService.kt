@@ -2,7 +2,6 @@ package br.pucpr.librarymanager.users
 
 import br.pucpr.librarymanager.book.Book
 import br.pucpr.librarymanager.book.BookController
-import br.pucpr.librarymanager.book.BookRepository
 import br.pucpr.librarymanager.book.book_requests.BookRequest
 import br.pucpr.librarymanager.exception.BadRequestException
 import br.pucpr.librarymanager.security.Jwt
@@ -12,7 +11,9 @@ import br.pucpr.librarymanager.users.responses.LoginResponse
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UsersService(
@@ -24,7 +25,7 @@ class UsersService(
         val user = User(
             email = req.email!!,
             password = req.password!!,
-            name = req.name!!
+            name = req.name!!,
         )
         val userRole = rolesRepository.findByName("USER")
             ?: throw IllegalStateException("Role 'USER' not found!")
@@ -60,9 +61,17 @@ class UsersService(
         return true
     }
 
-    fun getBooks(id: Long): MutableSet<Book> {
+    fun getBooksForUser(id: Long): MutableSet<Book> {
         val user = repository.findByIdOrNull(id) ?: return mutableSetOf()
         return user.books
+    }
+
+    fun addBookToUser(userId: Long, book: Book): Boolean {
+        // Achar o usuario já existente, retorna false senao
+        val user = getById(userId) ?: return false
+        user.books.add(book)
+        repository.save(user)
+        return true
     }
 
     companion object {

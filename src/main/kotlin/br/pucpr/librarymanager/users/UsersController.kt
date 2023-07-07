@@ -1,6 +1,6 @@
 package br.pucpr.librarymanager.users
 
-import br.pucpr.librarymanager.book.book_requests.BookRequest
+import br.pucpr.librarymanager.book.BookService
 import br.pucpr.librarymanager.users.requests.LoginRequest
 import br.pucpr.librarymanager.users.requests.UserRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/users")
-class UsersController(val service: UsersService) {
+class UsersController(
+    val service: UsersService,
+    val bookService: BookService) {
     @Operation(
         summary = "Lista todos os usuários",
         parameters = [
@@ -63,8 +65,24 @@ class UsersController(val service: UsersService) {
         if (service.delete(id)) ResponseEntity.ok().build()
         else ResponseEntity.notFound().build()
 
+    @PutMapping("/{id}/book")
+    @PreAuthorize("permitAll()")
+    @SecurityRequirement(name = "AuthServer")
+    fun addBookForUser(
+        @PathVariable("id") userId: Long,
+        @Valid @RequestBody bookId: Long): ResponseEntity<Void> =
+        bookService.getBookById(bookId)
+            ?.let {
+                if (service.addBookToUser(userId, it)) {
+                    ResponseEntity.ok().build()
+                } else {
+                    ResponseEntity.notFound().build()
+                }
+            }
+            ?: ResponseEntity.notFound().build()
+
     @GetMapping("/{id}/books")
     fun getBooksFor(@PathVariable("id") id: Long) =
-        service.getBooks(id)
+        service.getBooksForUser(id)
             ?.let { ResponseEntity.ok(it.forEach { it.toResponse() }) }
 }

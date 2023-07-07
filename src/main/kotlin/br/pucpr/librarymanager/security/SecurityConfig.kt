@@ -36,9 +36,8 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter) {
             .authorizeHttpRequests { requests ->
                 requests
                     .requestMatchers(HttpMethod.GET).permitAll()
-                    .requestMatchers("/error/**").permitAll()
+                    .requestMatchers("/error/**", "/h2-console/**", "/books/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/users", "/users/login").permitAll()
-                    .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }
             .addFilterBefore(jwtTokenFilter, BasicAuthenticationFilter::class.java)
