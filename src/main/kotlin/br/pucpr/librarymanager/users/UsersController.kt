@@ -1,6 +1,7 @@
 package br.pucpr.librarymanager.users
 
 import br.pucpr.librarymanager.book.BookService
+import br.pucpr.librarymanager.users.requests.AddBookToUserRequest
 import br.pucpr.librarymanager.users.requests.LoginRequest
 import br.pucpr.librarymanager.users.requests.UserRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -65,21 +66,13 @@ class UsersController(
         if (service.delete(id)) ResponseEntity.ok().build()
         else ResponseEntity.notFound().build()
 
-    @PutMapping("/{id}/book")
+    @PutMapping("/books")
     @PreAuthorize("permitAll()")
     @SecurityRequirement(name = "AuthServer")
-    fun addBookForUser(
-        @PathVariable("id") userId: Long,
-        @Valid @RequestBody bookId: Long): ResponseEntity<Void> =
-        bookService.getBookById(bookId)
-            ?.let {
-                if (service.addBookToUser(userId, it)) {
-                    ResponseEntity.ok().build()
-                } else {
-                    ResponseEntity.notFound().build()
-                }
-            }
-            ?: ResponseEntity.notFound().build()
+    fun addBookForUser(@Valid @RequestBody addBookRequest: AddBookToUserRequest) =
+        service.addBookToUser(addBookRequest)
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
 
     @GetMapping("/{id}/books")
     fun getBooksFor(@PathVariable("id") id: Long) =

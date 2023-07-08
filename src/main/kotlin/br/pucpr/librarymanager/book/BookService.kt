@@ -1,6 +1,7 @@
 package br.pucpr.librarymanager.book
 
 import br.pucpr.librarymanager.book.book_requests.BookRequest
+import br.pucpr.librarymanager.users.User
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -20,7 +21,7 @@ class BookService(
         return repository.save(userBook)
     }
 
-    fun getBookById(id: Long) = repository.findByIdOrNull(id)
+    fun getBookById(id: Long): Book? = repository.findByIdOrNull(id)
 
     fun deleteBookById(id: Long): Boolean {
         val book = repository.findByIdOrNull(id) ?: return false
@@ -30,15 +31,20 @@ class BookService(
 
     fun updateBookById(id: Long, newBook: Book): Book? {
         val book = repository.findByIdOrNull(id)
-       return if (book != null) {
-           val updateBook = book.copy(
-               title = newBook.title,
-               authors = newBook.authors)
-                repository.save(updateBook)
-       } else {
-           null
-       }
+        return if (book != null) {
+            val updateBook = book.copy(
+                title = newBook.title,
+                authors = newBook.authors)
+                 repository.save(updateBook)
+        } else {
+            null
+        }
     }
 
-
+    fun setUserForBook(id: Long, user: User): Boolean {
+        val book = repository.findByIdOrNull(id)?: return false
+        book.user = user
+        repository.save(book)
+        return true
+    }
 }
