@@ -39,14 +39,10 @@ class BookController (
         }
     }
 
-
     @DeleteMapping("/{id}")
     fun deleteBookById(@PathVariable("id") id: Long): ResponseEntity<Void> =
         if (service.deleteBookById(id)) ResponseEntity.ok().build()
         else ResponseEntity.notFound().build()
-
-
-
 
     @PostMapping("/filter")
     fun getBooksByTitle(
